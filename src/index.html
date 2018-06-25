@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" href="./style.css">
+    </head>
+
+    <body>
+        <div class="container">
+            <div id="listings">
+                <h2>Real Estate Listings</h2>
+                <hr>
+                <div id="filter-container" class="input-group">
+                        <div class="input-group-btn">
+                          <button id="filter-button" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">ID <span class="caret"></span></button>
+                          <ul id="filter-dropdown" class="dropdown-menu">
+                            <li><a>ID</a></li>
+                            <li><a>Price</a></li>
+                            <li><a>Bedrooms</a></li>
+                            <li><a>Bathrooms</a></li>
+                            <li><a>Stories</a></li>
+                            <li><a>Year</a></li>
+                            <li><a>Type</a></li>
+                          </ul>
+                        </div>
+                        <input id="filter-input" type="text" class="form-control" placeholder="filter">
+                      </div>
+                <table id="results" class="table table-striped">
+                    <tr>
+                        <th>ID</th>
+                        <th>Price</th>
+                        <th>Bedrooms</th>
+                        <th>Bathrooms</th>
+                        <th>Stories</th>
+                        <th>Type</th>
+                        <th>Year</th>
+                        <th>Favorite</th>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <h2>Favorites</h2>
+                <hr>
+                <p>You currently have <span id="numberOfFavorites"></span></p>
+                <table id="favorites" class="table table-striped">
+                        <tr>
+                                <th>ID</th>
+                                <th>Price</th>
+                                <th>Bedrooms</th>
+                                <th>Bathrooms</th>
+                                <th>Stories</th>
+                                <th>Type</th>
+                                <th>Year</th>
+                                <th></th>
+                                </tr>
+                </table>
+            </div>
+        </div>
+        <script src="app.js"></script>
+    </body>
+</html>
