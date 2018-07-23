@@ -4,12 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "http-server src",
+    "watch": "parcel src/index.html",
+    "start": "http-server dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "http-server": "^0.11.1"
+    "http-server": "^0.11.1",
+    "parcel-bundler": "^1.9.7",
+    "typescript": "^2.9.2"
   }
 }

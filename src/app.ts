@@ -1,23 +1,29 @@
-(function(){
+import ApiRealtyProvider from './providers/RealtyProvider/ApiRealtyProvider';
+import {RealtyData, RealtyDataset} from './models/RealtyData';
 
+(function(){
 var url = "http://www.mocky.io/v2/5b2c9e292f00002a00ebd2d7";
-var apiResponse;
+var apiResponse: RealtyDataset;
 var displayedListings = document.querySelector("#results>tbody");
 
 var numberOfFavorites = document.getElementById("numberOfFavorites");
-numberOfFavorites.innerHTML = 0;
+numberOfFavorites.innerHTML = String(0);
 var favorites = new Set();
 var favoritesDiv = document.getElementById("favorites");
 
 // Set up filter event listener
-var filterInput = document.getElementById("filter-input");
+var filterInput = <HTMLInputElement>document.getElementById("filter-input");
 filterInput.addEventListener("keyup", function(){
     filter(filterInput.value);
 });
 
 // Set up filter options
 var filterLabel = document.getElementById("filter-button");
-var filterOptionNodes = document.querySelectorAll("#filter-dropdown>li>a");
+
+// Why do I need to create an array from this? the docs says that the NodeListOf has the forEach method...
+// https://github.com/Microsoft/TypeScript/blob/master/src/lib/dom.generated.d.ts
+// line 10386
+var filterOptionNodes = Array.from(document.querySelectorAll("#filter-dropdown>li>a"));
 var currentFilterOption = "id";
 filterOptionNodes.forEach(function(option){
     option.addEventListener("click", function(){
@@ -35,12 +41,12 @@ function filter(filterTerm) {
     if(matchingListingsJson.length !== 0) {
         renderListings(matchingListingsJson);
     } else {
-         renderListings({});
+         renderListings([]);
     }
 }
 
-function renderListings(json = {}) {
-    displayedListings.innerHTML = createListingsHTML(json);
+function renderListings(listings: RealtyDataset = []) {
+    displayedListings.innerHTML = createListingsHTML(listings);
     attachFavoritesToggles();
 }
 
@@ -50,12 +56,12 @@ function findMatchingListings(filterOption, filterTerm) {
 }
 
 function toggleFavorites(checked, id) {
-    if(!checked, favorites.has(id)) {
+    if(!checked && favorites.has(id)) {
         removeFavorite(id);
     } else if(checked) {
         addFavorite(id);
     }
-    numberOfFavorites.innerHTML = favorites.size;
+    numberOfFavorites.innerHTML = String(favorites.size);
 }
 
 function addFavorite(id) {
@@ -84,7 +90,7 @@ function removeFavorite(id) {
         favoritesEntry.parentNode.removeChild(favoritesEntry);
     }
     favorites.delete(id);
-    var favoriteCheckbox = document.querySelector(`input[value=${id}]`);
+    var favoriteCheckbox = <HTMLInputElement>document.querySelector(`input[value=${id}]`);
     if(favoriteCheckbox !== null){
         favoriteCheckbox.checked = false;
     }
@@ -101,24 +107,24 @@ function findFavorite(id) {
     return favorite;
 }
 
-function createListingsHTML(json) {
-    if(Object.keys(json).length === 0) {
+function createListingsHTML(listings: RealtyDataset): string {
+    if(listings == []) {
         return "";
     } else {
-        var result = json.map(entry => {
+        var result = listings.map((listing: RealtyData) => {
             var result =  `
-            <tr id=R${entry.id} class="table-listing">
-            <td>${entry.id}</td>
-            <td>${entry.price}</td>
-            <td>${entry.bedrooms}</td>
-            <td>${entry.bathrooms}</td>
-            <td>${entry.stories}</td>
-            <td>${entry.type}</td>
-            <td>${entry.year}</td>`;
-            if(favorites.has(entry.id)) {
-                result += `<td><input type="checkbox" value="${entry.id}" checked=true"></input></td></tr>`
+            <tr id=R${listing.id} class="table-listing">
+            <td>${listing.id}</td>
+            <td>${listing.price}</td>
+            <td>${listing.bedrooms}</td>
+            <td>${listing.bathrooms}</td>
+            <td>${listing.stories}</td>
+            <td>${listing.type}</td>
+            <td>${listing.year}</td>`;
+            if(favorites.has(listing.id)) {
+                result += `<td><input type="checkbox" value="${listing.id}" checked=true"></input></td></tr>`
             } else {
-                result += `<td><input type="checkbox" value="${entry.id}"></input></td></tr>`
+                result += `<td><input type="checkbox" value="${listing.id}"></input></td></tr>`
             }
             return result;
         }).reduce(function(acc, curr){
@@ -128,22 +134,21 @@ function createListingsHTML(json) {
     }
 }
 
-fetch(url).then(function(response) {
-    return response.json();
-}).then(function(json){
-    apiResponse = json;
+(async ()=>{
+    const realtyProvider = new ApiRealtyProvider();
+    apiResponse = await realtyProvider.getRealtyData();
     renderListings(apiResponse);
-});
+})();
 
 function attachFavoritesToggles() {
-    var inputs = document.querySelectorAll("#results>tbody tr input");
-    inputs.forEach(function(input){
+    var inputs = Array.from(document.querySelectorAll("#results>tbody tr input"));
+    inputs.forEach(function(input: HTMLInputElement){
         input.onclick = () => toggleFavorites(input.checked, input.value);
     });
 }
 
 function attachRemoveListener(button) {
-    button.onclick = () => removeFavorite(button.getAttribute("value"));
+    button.onclick = () => toggleFavorites(false, button.getAttribute("value"));
 }
 
 })();
